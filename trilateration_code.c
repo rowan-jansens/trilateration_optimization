@@ -13,10 +13,7 @@ double x3 = -200;
 double y3 = -200;
 double z3 = -200;
 
-
-double px = 22.23;      //set object position
-double py = -423.17654;
-double pz = 639.13579;
+double px, py, pz;
 
 
 
@@ -28,6 +25,7 @@ double ex1, ex2, ex3, ey1, ey2, ey3, ez1, ez2, ez3;
 double stepx, stepy, stepz;
 int kill_timex, kill_timey, kill_timez;
 int i, j;
+char defaults = 'n';
 
 //get Mean Square Error for x axis
 
@@ -95,6 +93,21 @@ double get_slopez(double gz){
 
 int main(){
 
+  printf("Would you like to use a default satellite configuration? (y/n)\n");
+  scanf("%c", &defaults);
+
+  printf("Please enter the coordinates (x y z) of a point: \n");
+  scanf("%lf %lf %lf", &px, &py, &pz);
+
+  if (defaults == 'n'){
+    printf("Enter the coordinates (x y z) of the 1st satellite: ");
+    scanf("%lf %lf %lf", &x1, &Y1, &z1);
+    printf("Enter the coordinates (x y z) of the 2nd satellite: ");
+    scanf("%lf %lf %lf", &x2, &y2, &z2);
+    printf("Enter the coordinates (x y z) of the 3rd satellite: ");
+    scanf("%lf %lf %lf", &x3, &y3, &z3);
+  }
+
   gx = 0;       //set initial guess points
   gy = 0;
   gz = 0;
@@ -117,7 +130,7 @@ int main(){
     }
     
     else{
-      //printf("GX: %f, Error: %f, Error Slope: %f, Step: %f\n",
+      //printf("Current X Poistion: %f, Error: %f, Error Slope: %f, Step: %f\n",
       //gx, msex(gx), get_slopex(gx), get_slopex(gx)/2);
       stepx = (get_slopex(gx)/2);
       gx = gx - stepx;
@@ -141,7 +154,7 @@ int main(){
     }
     
     else{
-      //printf("GY: %f, Error: %f, Error Slope: %f, Step: %f\n",
+      //printf("Current Y Poistion: %f, Error: %f, Error Slope: %f, Step: %f\n",
       //gy, msey(gy), get_slopey(gy), get_slopey(gy)/2);
       stepy = (get_slopey(gy)/2);
       gy = gy - stepy;
@@ -165,7 +178,7 @@ int main(){
     }
     
     else{
-      //printf("GZ: %f, Error: %f, Error Slope: %f, Step: %f\n",
+      //printf("Current Z Poistion: %f, Error: %f, Error Slope: %f, Step: %f\n",
       //gz, msez(gz), get_slopez(gz), get_slopez(gz)/2);
       stepz = (get_slopez(gz)/2);
       gz = gz - stepz;
@@ -173,22 +186,29 @@ int main(){
     }
   }
 
+  //print out the calculated cords along with the error
   printf("X: %f\t\tError: %f\nY: %f\t\tError: %f\nZ: %f\t\tError: %f\n",
   gx, msex(gx), gy, msey(gy), gz, msez(gz));
 
-  
-  //print out the aproximated x,y of the object
 
-  /* for (j=1000; j>=-1000; j-=10){
+  //create a data file for a 3d surface plot for 2 of the 3 variable
+  
+  FILE * fpointer1 = fopen("surface_data.csv", "w");
+  for (j=1000; j>=-1000; j-=10){
     for (i=-1000; i<=1000; i+=10){
-      printf("%d,%d,%f\n",i, j, (msex(i) + msey(j)));
+      fprintf(fpointer1, "%d,%d,%f\n",i, j, ((msex(i) + msey(j)) / 100000));
 	}
-    printf("\n");
+    fprintf(fpointer1, "\n");
   }
-  */
+  fclose(fpointer1);
 
- 
+
   
+  FILE * fpointer2 = fopen("2d_data.csv", "w");
+  for (i=-1000; i<=1000; i+=10){
+    fprintf(fpointer2, "%d,%f,%f,%f\n", i, msex(i), msey(i), msez(i));
+	}
+  fclose(fpointer2);
 
   return 0;
 }

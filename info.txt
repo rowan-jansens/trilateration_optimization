@@ -1,0 +1,3 @@
+To view a 3d plot of the error function for x and y, use the command  surface.p
+
+to view a 2d plot use  2d.p
