@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-
-double x1 = 0;      //set beacon positions
+double x1 = 0;      //set satellite positions
 double Y1 = 0;
 double z1 = 0;
 double x2 = 200;
@@ -13,9 +12,7 @@ double x3 = -200;
 double y3 = -200;
 double z3 = -200;
 
-double px, py, pz;
-
-
+double px, py, pz;   //the coordinates of the point
 
 double gx, gy, gz;
 double disx1, disx2, disx3, offx1, offx2, offx3;     //temporary variables
@@ -57,6 +54,8 @@ double msey(double gy){
   return (pow(ey1, 2) + pow(ey2, 2) + pow(ey3, 2)) / 3;  
 }
 
+//get Mean Square Error fo z axis
+
 double msez(double gz){
   disz1 = fabs(pz - z1);
   disz2 = fabs(pz - z2);
@@ -70,7 +69,6 @@ double msez(double gz){
   return (pow(ez1, 2) + pow(ez2, 2) + pow(ez3, 2)) / 3;  
 }
 
-
 //get x-axis error slope
 
 double get_slopex(double gx){
@@ -83,16 +81,13 @@ double get_slopey(double gy){
   return (msey(gy+0.000001)-msey(gy))/((gy+0.000001)-gy);
     }
 
+//get z-axis error slope
+
 double get_slopez(double gz){
   return (msez(gz+0.000001)-msez(gz))/((gz+0.000001)-gz);
     }
 
-
-
-  
-
-int main(){
-
+int setup(){
   printf("Would you like to use a default satellite configuration? (y/n)\n");
   scanf("%c", &defaults);
 
@@ -107,7 +102,12 @@ int main(){
     printf("Enter the coordinates (x y z) of the 3rd satellite: ");
     scanf("%lf %lf %lf", &x3, &y3, &z3);
   }
+  return 0;
+}
 
+int main(){
+
+  setup();
   gx = 0;       //set initial guess points
   gy = 0;
   gz = 0;
@@ -115,20 +115,17 @@ int main(){
   kill_timey = 0;
   kill_timez = 0;
 
-  while (msex(gx) > 0.0001 && kill_timex < 6){
+  //run optimization for each axis
+  
+  //Un-comment the "printf" staments to see the steps the program
+  //takes during optimization
 
+  while (msex(gx) > 0.0001 && kill_timex < 6){
     if (get_slopex(gx) < 0.0001 && get_slopex(gx) > -0.0001){
-        if(msex(gx) > msex(gx * -1)){
-	  gx = gx * -1;
-	}
-	else if(msex(gx) > msex(gx/3)){
-	  gx = gx/3;
-	}
-	else{
-	  gx = -1;
-	}
+      if(msex(gx) > msex(gx * -1)){
+        gx = gx * -1;
+      }
     }
-    
     else{
       //printf("Current X Poistion: %f, Error: %f, Error Slope: %f, Step: %f\n",
       //gx, msex(gx), get_slopex(gx), get_slopex(gx)/2);
@@ -137,22 +134,13 @@ int main(){
       kill_timex++;
     }
   }
-
   
   while (msey(gy) > 0.0001 && kill_timey < 6){
-
     if (get_slopey(gy) < 0.0001 && get_slopey(gy) > -0.0001){
       if(msey(gy) > msey(gy * -1)){
-    gy = gy * -1;
-      }
-      else if(msey(gy) > msey(gy/3)){
-	  gy = gy/3;
-	}
-      else{
-	gy = -1;
+	gy = gy * -1;
       }
     }
-    
     else{
       //printf("Current Y Poistion: %f, Error: %f, Error Slope: %f, Step: %f\n",
       //gy, msey(gy), get_slopey(gy), get_slopey(gy)/2);
@@ -161,22 +149,13 @@ int main(){
       kill_timey++;
     }
   }
-
   
   while (msez(gz) > 0.0001 && kill_timez < 6){
-
     if (get_slopez(gz) < 0.0001 && get_slopez(gz) > -0.0001){
       if(msez(gz) > msez(gz * -1)){
     gz = gz * -1;
       }
-      else if(msez(gz) > msez(gz/3)){
-	  gz = gz/3;
-	}
-      else{
-	gz = -1;
-      }
     }
-    
     else{
       //printf("Current Z Poistion: %f, Error: %f, Error Slope: %f, Step: %f\n",
       //gz, msez(gz), get_slopez(gz), get_slopez(gz)/2);
@@ -186,14 +165,14 @@ int main(){
     }
   }
 
-  //print out the calculated cords along with the error
+  //print out the cords of the calculated point along with the error
   printf("X: %f\t\tError: %f\nY: %f\t\tError: %f\nZ: %f\t\tError: %f\n",
   gx, msex(gx), gy, msey(gy), gz, msez(gz));
 
 
   //create a data file for a 3d surface plot for 2 of the 3 variable
   
-  FILE * fpointer1 = fopen("surface_data.csv", "w");
+  FILE * fpointer1 = fopen("surface.dat", "w");
   for (j=1000; j>=-1000; j-=10){
     for (i=-1000; i<=1000; i+=10){
       fprintf(fpointer1, "%d,%d,%f\n",i, j, ((msex(i) + msey(j)) / 100000));
@@ -202,17 +181,13 @@ int main(){
   }
   fclose(fpointer1);
 
-
+  //create a data file for a 2d surface plot for all 3 variables
   
-  FILE * fpointer2 = fopen("2d_data.csv", "w");
+  FILE * fpointer2 = fopen("2d.dat", "w");
   for (i=-1000; i<=1000; i+=10){
-    fprintf(fpointer2, "%d,%f,%f,%f\n", i, msex(i), msey(i), msez(i));
+    fprintf(fpointer2, "%d,%f,%f,%f\n", i, msex(i) / 100000, msey(i) / 100000, msez(i) / 100000);
 	}
   fclose(fpointer2);
 
   return 0;
 }
-
-  
-  
-
