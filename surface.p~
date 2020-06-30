@@ -1,5 +1,0 @@
-set datafile separator ','
-set pm3d
-set xlabel 'x-coordinate'
-sey ylabel 'y-coordinate'
-splot 'surface_data.csv' pt 7 ps 10
