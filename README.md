@@ -6,11 +6,11 @@ radius between the point and each satellite.
 
 #==========RUNNING THE CODE=================================================
 
+Code can be compiled using:
+$gcc trilateration_code.c -o trilateration_code -lm
+
 Code can be executed using:
 $./trilateration_code
-
-Changes to the code can be compiled using:
-$gcc trilateration_code.c -o trilateration_code -lm
 
 #==========GENERATING PLOTS=================================================
 
@@ -25,18 +25,13 @@ $gnuplot surface.p
 coordinate, run the "2d.p" script using:
 $gnuplot 2d.p
 
-Running either of these scripts will save a png image of the plot
-in the working directory.
-The plots are generated using datafiles (surface.dat & 2d.dat)
-which are automatically created/re-written when the program is run.
-
 #==========INTUITION========================================================
 
 While each satellites "knows" the radius between it and the point,
 the point could lie anywhere on a sphere centered around the satellite.
 With multiple satellites, the intersection of these spheres narrow down
 the possible locations of the point. In a perfect world, the spheres of
-3+ satellites with perfectly measured radii would intersect at exactly
+4+ satellites with perfectly measured radii would intersect at exactly
 one point.  However, in the real world it is unlikely that you would get
 such a perfect scenario and often the spheres do not intersect at a
 single point which forces us to find alternative methods to locate the
@@ -83,8 +78,3 @@ The program runs the above logic in a loop for a few cycles to ensure
 that it has arrived at the lowest value possible. It does this for
 each varible/axis (x, y, z).  In other words, first it minimizes
 the x coordinate, then y, then z, to arive at a solution.
-
-
-
-
-
