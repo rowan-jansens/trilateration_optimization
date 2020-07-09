@@ -1,10 +1,11 @@
-#==========INTRODUCTION=====================================================
+# Trilateration Optimization
+## =====INTRODUCTION=========
 
-A model to demonstrate how a satellite constellation of 3 satellites uses
-optimization to pinpoint the position (x,y,z) of a point when giving the
+This is a model to demonstrate how a satellite constellation of 3+ satellites can 
+use optimization to pinpoint the position (x,y,z) of a point when giving the
 radius between the point and each satellite.
 
-#==========RUNNING THE CODE=================================================
+## =====RUNNING THE CODE=====
 
 Code can be compiled using:
 $gcc trilateration_code.c -o trilateration_code -lm
@@ -12,8 +13,7 @@ $gcc trilateration_code.c -o trilateration_code -lm
 Code can be executed using:
 $./trilateration_code
 
-#==========GENERATING PLOTS=================================================
-
+## =====GENERATING PLOTS=====
 By installing gnuplot, you will be able to take a look at the error
 functions for a particular configuration.
 
@@ -25,7 +25,7 @@ $gnuplot surface.p
 coordinate, run the "2d.p" script using:
 $gnuplot 2d.p
 
-#==========INTUITION========================================================
+## =====INTUITION============
 
 While each satellites "knows" the radius between it and the point,
 the point could lie anywhere on a sphere centered around the satellite.
